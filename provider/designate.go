@@ -199,7 +199,10 @@ func (c designateClient) ForEachZone(handler func(zone *zones.Zone) error) error
 
 // ForEachRecordSet calls handler for each recordset in the given DNS zone
 func (c designateClient) ForEachRecordSet(zoneID string, handler func(recordSet *recordsets.RecordSet) error) error {
-	pager := recordsets.ListByZone(c.serviceClient, zoneID, recordsets.ListOpts{})
+	listOpts := recordsets.ListOpts{
+		Limit: -1,
+	}
+	pager := recordsets.ListByZone(c.serviceClient, zoneID, listOpts)
 	return pager.EachPage(
 		func(page pagination.Page) (bool, error) {
 			list, err := recordsets.ExtractRecordSets(page)
